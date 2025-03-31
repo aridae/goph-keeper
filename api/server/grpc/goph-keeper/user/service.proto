@@ -11,7 +11,7 @@ service UsersService {
   rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse);
 
   // Аутентификация пользователя
-  rpc Authenticate(AuthenticationRequest) returns (AuthenticationResponse);
+  rpc LoginUser(LoginUserRequest) returns (LoginUserResponse);
 }
 
 message RegisterUserRequest {
@@ -19,13 +19,15 @@ message RegisterUserRequest {
   string password = 2;
 }
 
-message RegisterUserResponse {}
+message RegisterUserResponse {
+  string token = 1;
+}
 
-message AuthenticationRequest {
+message LoginUserRequest {
   string username = 1;
   string password = 2;
 }
 
-message AuthenticationResponse {
+message LoginUserResponse {
   string token = 1;
 }

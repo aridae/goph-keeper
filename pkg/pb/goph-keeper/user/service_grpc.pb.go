@@ -20,7 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	UsersService_RegisterUser_FullMethodName = "/goph_keeper.UsersService/RegisterUser"
-	UsersService_Authenticate_FullMethodName = "/goph_keeper.UsersService/Authenticate"
+	UsersService_LoginUser_FullMethodName    = "/goph_keeper.UsersService/LoginUser"
 )
 
 // UsersServiceClient is the client API for UsersService service.
@@ -32,7 +32,7 @@ type UsersServiceClient interface {
 	// Регистрация нового пользователя
 	RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...grpc.CallOption) (*RegisterUserResponse, error)
 	// Аутентификация пользователя
-	Authenticate(ctx context.Context, in *AuthenticationRequest, opts ...grpc.CallOption) (*AuthenticationResponse, error)
+	LoginUser(ctx context.Context, in *LoginUserRequest, opts ...grpc.CallOption) (*LoginUserResponse, error)
 }
 
 type usersServiceClient struct {
@@ -53,10 +53,10 @@ func (c *usersServiceClient) RegisterUser(ctx context.Context, in *RegisterUserR
 	return out, nil
 }
 
-func (c *usersServiceClient) Authenticate(ctx context.Context, in *AuthenticationRequest, opts ...grpc.CallOption) (*AuthenticationResponse, error) {
+func (c *usersServiceClient) LoginUser(ctx context.Context, in *LoginUserRequest, opts ...grpc.CallOption) (*LoginUserResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AuthenticationResponse)
-	err := c.cc.Invoke(ctx, UsersService_Authenticate_FullMethodName, in, out, cOpts...)
+	out := new(LoginUserResponse)
+	err := c.cc.Invoke(ctx, UsersService_LoginUser_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +72,7 @@ type UsersServiceServer interface {
 	// Регистрация нового пользователя
 	RegisterUser(context.Context, *RegisterUserRequest) (*RegisterUserResponse, error)
 	// Аутентификация пользователя
-	Authenticate(context.Context, *AuthenticationRequest) (*AuthenticationResponse, error)
+	LoginUser(context.Context, *LoginUserRequest) (*LoginUserResponse, error)
 	mustEmbedUnimplementedUsersServiceServer()
 }
 
@@ -86,8 +86,8 @@ type UnimplementedUsersServiceServer struct{}
 func (UnimplementedUsersServiceServer) RegisterUser(context.Context, *RegisterUserRequest) (*RegisterUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterUser not implemented")
 }
-func (UnimplementedUsersServiceServer) Authenticate(context.Context, *AuthenticationRequest) (*AuthenticationResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Authenticate not implemented")
+func (UnimplementedUsersServiceServer) LoginUser(context.Context, *LoginUserRequest) (*LoginUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoginUser not implemented")
 }
 func (UnimplementedUsersServiceServer) mustEmbedUnimplementedUsersServiceServer() {}
 func (UnimplementedUsersServiceServer) testEmbeddedByValue()                      {}
@@ -128,20 +128,20 @@ func _UsersService_RegisterUser_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UsersService_Authenticate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AuthenticationRequest)
+func _UsersService_LoginUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UsersServiceServer).Authenticate(ctx, in)
+		return srv.(UsersServiceServer).LoginUser(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UsersService_Authenticate_FullMethodName,
+		FullMethod: UsersService_LoginUser_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UsersServiceServer).Authenticate(ctx, req.(*AuthenticationRequest))
+		return srv.(UsersServiceServer).LoginUser(ctx, req.(*LoginUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -158,8 +158,8 @@ var UsersService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UsersService_RegisterUser_Handler,
 		},
 		{
-			MethodName: "Authenticate",
-			Handler:    _UsersService_Authenticate_Handler,
+			MethodName: "LoginUser",
+			Handler:    _UsersService_LoginUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -75,6 +75,7 @@ func (x *RegisterUserRequest) GetPassword() string {
 
 type RegisterUserResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -109,7 +110,14 @@ func (*RegisterUserResponse) Descriptor() ([]byte, []int) {
 	return file_service_proto_rawDescGZIP(), []int{1}
 }
 
-type AuthenticationRequest struct {
+func (x *RegisterUserResponse) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
+type LoginUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
 	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
@@ -117,20 +125,20 @@ type AuthenticationRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AuthenticationRequest) Reset() {
-	*x = AuthenticationRequest{}
+func (x *LoginUserRequest) Reset() {
+	*x = LoginUserRequest{}
 	mi := &file_service_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AuthenticationRequest) String() string {
+func (x *LoginUserRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AuthenticationRequest) ProtoMessage() {}
+func (*LoginUserRequest) ProtoMessage() {}
 
-func (x *AuthenticationRequest) ProtoReflect() protoreflect.Message {
+func (x *LoginUserRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_service_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -142,46 +150,46 @@ func (x *AuthenticationRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AuthenticationRequest.ProtoReflect.Descriptor instead.
-func (*AuthenticationRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoginUserRequest.ProtoReflect.Descriptor instead.
+func (*LoginUserRequest) Descriptor() ([]byte, []int) {
 	return file_service_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *AuthenticationRequest) GetUsername() string {
+func (x *LoginUserRequest) GetUsername() string {
 	if x != nil {
 		return x.Username
 	}
 	return ""
 }
 
-func (x *AuthenticationRequest) GetPassword() string {
+func (x *LoginUserRequest) GetPassword() string {
 	if x != nil {
 		return x.Password
 	}
 	return ""
 }
 
-type AuthenticationResponse struct {
+type LoginUserResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AuthenticationResponse) Reset() {
-	*x = AuthenticationResponse{}
+func (x *LoginUserResponse) Reset() {
+	*x = LoginUserResponse{}
 	mi := &file_service_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AuthenticationResponse) String() string {
+func (x *LoginUserResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AuthenticationResponse) ProtoMessage() {}
+func (*LoginUserResponse) ProtoMessage() {}
 
-func (x *AuthenticationResponse) ProtoReflect() protoreflect.Message {
+func (x *LoginUserResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_service_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -193,12 +201,12 @@ func (x *AuthenticationResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AuthenticationResponse.ProtoReflect.Descriptor instead.
-func (*AuthenticationResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoginUserResponse.ProtoReflect.Descriptor instead.
+func (*LoginUserResponse) Descriptor() ([]byte, []int) {
 	return file_service_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *AuthenticationResponse) GetToken() string {
+func (x *LoginUserResponse) GetToken() string {
 	if x != nil {
 		return x.Token
 	}
@@ -212,16 +220,17 @@ const file_service_proto_rawDesc = "" +
 	"\rservice.proto\x12\vgoph_keeper\"M\n" +
 	"\x13RegisterUserRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"\x16\n" +
-	"\x14RegisterUserResponse\"O\n" +
-	"\x15AuthenticationRequest\x12\x1a\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\",\n" +
+	"\x14RegisterUserResponse\x12\x14\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\"J\n" +
+	"\x10LoginUserRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\".\n" +
-	"\x16AuthenticationResponse\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token2\xbc\x01\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\")\n" +
+	"\x11LoginUserResponse\x12\x14\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token2\xaf\x01\n" +
 	"\fUsersService\x12S\n" +
-	"\fRegisterUser\x12 .goph_keeper.RegisterUserRequest\x1a!.goph_keeper.RegisterUserResponse\x12W\n" +
-	"\fAuthenticate\x12\".goph_keeper.AuthenticationRequest\x1a#.goph_keeper.AuthenticationResponseBFZDgithub.com/aridae/goph-keeper/pkg/pb/goph-keeper/user;gophkeeperuserb\x06proto3"
+	"\fRegisterUser\x12 .goph_keeper.RegisterUserRequest\x1a!.goph_keeper.RegisterUserResponse\x12J\n" +
+	"\tLoginUser\x12\x1d.goph_keeper.LoginUserRequest\x1a\x1e.goph_keeper.LoginUserResponseBFZDgithub.com/aridae/goph-keeper/pkg/pb/goph-keeper/user;gophkeeperuserb\x06proto3"
 
 var (
 	file_service_proto_rawDescOnce sync.Once
@@ -237,16 +246,16 @@ func file_service_proto_rawDescGZIP() []byte {
 
 var file_service_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_service_proto_goTypes = []any{
-	(*RegisterUserRequest)(nil),    // 0: goph_keeper.RegisterUserRequest
-	(*RegisterUserResponse)(nil),   // 1: goph_keeper.RegisterUserResponse
-	(*AuthenticationRequest)(nil),  // 2: goph_keeper.AuthenticationRequest
-	(*AuthenticationResponse)(nil), // 3: goph_keeper.AuthenticationResponse
+	(*RegisterUserRequest)(nil),  // 0: goph_keeper.RegisterUserRequest
+	(*RegisterUserResponse)(nil), // 1: goph_keeper.RegisterUserResponse
+	(*LoginUserRequest)(nil),     // 2: goph_keeper.LoginUserRequest
+	(*LoginUserResponse)(nil),    // 3: goph_keeper.LoginUserResponse
 }
 var file_service_proto_depIdxs = []int32{
 	0, // 0: goph_keeper.UsersService.RegisterUser:input_type -> goph_keeper.RegisterUserRequest
-	2, // 1: goph_keeper.UsersService.Authenticate:input_type -> goph_keeper.AuthenticationRequest
+	2, // 1: goph_keeper.UsersService.LoginUser:input_type -> goph_keeper.LoginUserRequest
 	1, // 2: goph_keeper.UsersService.RegisterUser:output_type -> goph_keeper.RegisterUserResponse
-	3, // 3: goph_keeper.UsersService.Authenticate:output_type -> goph_keeper.AuthenticationResponse
+	3, // 3: goph_keeper.UsersService.LoginUser:output_type -> goph_keeper.LoginUserResponse
 	2, // [2:4] is the sub-list for method output_type
 	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
