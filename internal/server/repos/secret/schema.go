@@ -24,4 +24,6 @@ var baseSelectQuery = psql.Select(
 	keyCol,
 	dataCol,
 	ownerUsernameCol,
+	createdAtCol,
+	updatedAtCol,
 ).From(database.SecretsTable).Where(squirrel.Eq{isDeletedCol: false})
