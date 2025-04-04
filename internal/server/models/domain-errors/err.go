@@ -6,10 +6,9 @@ import (
 
 const (
 	UnauthorizedErrorCode = iota + 1
-	UsernameAlreadyTakenErrorCode
-	InvalidUserCredentialsErrorCode
-	SecretNotFoundErrorCode
-	SecretAlreadyExists
+	FailedPreconditionErrorCode
+	InvalidArgumentErrorCode
+	NotFoundErrorCode
 )
 
 type DomainError struct {
@@ -31,27 +30,27 @@ func ErrUnauthorized() error {
 func ErrInvalidUserCredentials() error {
 	return DomainError{
 		msg:  "Invalid credentials",
-		Code: InvalidUserCredentialsErrorCode,
+		Code: InvalidArgumentErrorCode,
 	}
 }
 
 func ErrUsernameAlreadyTaken(username string) error {
 	return DomainError{
 		msg:  fmt.Sprintf("Username %s already taken", username),
-		Code: UsernameAlreadyTakenErrorCode,
+		Code: FailedPreconditionErrorCode,
 	}
 }
 
 func ErrSecretNotFound(key string) error {
 	return DomainError{
 		msg:  fmt.Sprintf("Secret %s not found", key),
-		Code: SecretNotFoundErrorCode,
+		Code: NotFoundErrorCode,
 	}
 }
 
 func ErrSecretAlreadyExists(key string) error {
 	return DomainError{
 		msg:  fmt.Sprintf("Secret %s already exists", key),
-		Code: SecretAlreadyExists,
+		Code: FailedPreconditionErrorCode,
 	}
 }

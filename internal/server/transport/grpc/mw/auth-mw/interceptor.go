@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+	"slices"
 	"strings"
 )
 
@@ -18,8 +19,13 @@ type jwtService interface {
 
 func AuthServerInterceptor(
 	jwtService jwtService,
+	whitelist []string,
 ) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+		if slices.Contains(whitelist, info.FullMethod) {
+			return handler(ctx, req)
+		}
+
 		token, err := extractTokenFromMetaData(ctx, "Bearer")
 		if err != nil {
 			return nil, status.Errorf(codes.Unauthenticated, err.Error())

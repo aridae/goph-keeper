@@ -25,8 +25,9 @@ func NewServer(
 	port int,
 	usersAPIServer gophkeeperuserpb.UsersServiceServer,
 	secretsAPIServer gophkeepersecretpb.SecretsServiceServer,
+	interceptors ...grpc.UnaryServerInterceptor,
 ) *Server {
-	grpcServ := grpc.NewServer()
+	grpcServ := grpc.NewServer(grpc.ChainUnaryInterceptor(interceptors...))
 
 	gophkeeperuserpb.RegisterUsersServiceServer(grpcServ, usersAPIServer)
 	gophkeepersecretpb.RegisterSecretsServiceServer(grpcServ, secretsAPIServer)
