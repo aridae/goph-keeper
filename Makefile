@@ -43,10 +43,10 @@ install-protoc-gen-go: install-protoc
 generate-pb: install-protoc-gen-go
 	$(info Generating proto and grpc implementation...)
 	PATH=${PATH}:${LOCALBIN} ${LOCALBIN}/protoc/bin/protoc --proto_path=api/server/grpc/goph-keeper/user \
-			--go_out=pkg/pb/goph-keeper/user --go_opt=paths=source_relative \
-  			--go-grpc_out=pkg/pb/goph-keeper/user --go-grpc_opt=paths=source_relative \
-   			service.proto
+		--go_out=pkg/pb/goph-keeper/user --go_opt=paths=source_relative \
+		--go-grpc_out=pkg/pb/goph-keeper/user --go-grpc_opt=paths=source_relative \
+		users_service.proto
 	PATH=${PATH}:${LOCALBIN} ${LOCALBIN}/protoc/bin/protoc --proto_path=api/server/grpc/goph-keeper/secret \
 		--go_out=pkg/pb/goph-keeper/secret --go_opt=paths=source_relative \
 		--go-grpc_out=pkg/pb/goph-keeper/secret --go-grpc_opt=paths=source_relative \
-		service.proto
+		secrets_service.proto

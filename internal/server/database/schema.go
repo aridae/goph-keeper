@@ -19,7 +19,7 @@ create table if not exists secrets (
     is_deleted boolean not null default false 
 );
 
-create unique index idx_unq_secrets__owner_username__key
+create unique index if not exists idx_unq_secrets__owner_username__key
     on secrets(owner_username, key)
     where is_deleted=false;
 `

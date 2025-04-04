@@ -2,11 +2,10 @@ package user
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/Masterminds/squirrel"
 	"github.com/aridae/goph-keeper/internal/server/models"
-	"github.com/jackc/pgx/v5"
+	"github.com/georgysavva/scany/v2/pgxscan"
 )
 
 func (r *Repository) GetByUsername(ctx context.Context, username string) (*models.UserCredentials, error) {
@@ -19,15 +18,21 @@ func (r *Repository) GetByUsername(ctx context.Context, username string) (*model
 		return nil, fmt.Errorf("failed to build query: %w", err)
 	}
 
-	var dto userDTO
-	err = queryable.QueryRow(ctx, sql, args...).Scan(&dto)
+	rows, err := queryable.Query(ctx, sql, args...)
 	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, nil
-		}
+		return nil, fmt.Errorf("failed to query: %w", err)
+	}
 
+	var dtos []userDTO
+	err = pgxscan.ScanAll(&dtos, rows)
+	if err != nil {
 		return nil, fmt.Errorf("failed to scan row into userDTO: %w", err)
 	}
+
+	if len(dtos) == 0 {
+		return nil, nil
+	}
+	dto := dtos[0]
 
 	user := mapDTOToDomainUserCredentials(dto)
 

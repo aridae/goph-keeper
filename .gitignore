@@ -26,3 +26,5 @@ go.work.sum
 
 .idea/
 bin/
+
+postgres-compose.yaml

@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v6.30.0
-// source: service.proto
+// source: secrets_service.proto
 
 package gophkeepersecret
 
@@ -243,5 +243,5 @@ var SecretsService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "service.proto",
+	Metadata: "secrets_service.proto",
 }

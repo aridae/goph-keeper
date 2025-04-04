@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"github.com/aridae/goph-keeper/internal/logger"
+	"github.com/aridae/goph-keeper/internal/server/config"
 	userusecases "github.com/aridae/goph-keeper/internal/server/controllers/user"
 	"github.com/aridae/goph-keeper/internal/server/database"
 	"github.com/aridae/goph-keeper/internal/server/pkg/jwt"
@@ -23,8 +24,9 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	go watchTerminationSignals(cancel, os.Interrupt, syscall.SIGTERM, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGHUP)
 
-	// config-needed: db dsn, initial reconnect fallback, max retries count
-	pgClient := mustInitPostgresClient(ctx, "", 5)
+	cnf := config.MustGetOnce()
+
+	pgClient := mustInitPostgresClient(ctx, cnf.DatabaseDSN)
 
 	err := database.PrepareSchema(ctx, pgClient)
 	if err != nil {
@@ -33,16 +35,14 @@ func main() {
 
 	userRepository := userrepo.NewRepository(pgClient, trmpgx.DefaultCtxGetter)
 
-	// config-needed: jwt key
-	jwtService := mustInitJWTService(ctx, "")
+	jwtService := mustInitJWTService(ctx, cnf.JWTKey)
 
 	userUseCasesController := userusecases.NewController(userRepository, jwtService)
 
 	usersAPI := usersapi.New(userUseCasesController)
 	secretsAPI := secretsapi.New(nil)
 
-	// config-needed: grpc port
-	grpcServer := grpcserver.NewServer(7012, usersAPI, secretsAPI)
+	grpcServer := grpcserver.NewServer(cnf.GrpcPort, usersAPI, secretsAPI)
 
 	if err := grpcServer.Run(ctx); err != nil {
 		logger.Fatalf("failed to start grpc server: %v", err)
@@ -52,6 +52,7 @@ func main() {
 func mustInitPostgresClient(ctx context.Context, dsn string) *postgres.Client {
 	client, err := postgres.NewClient(ctx, dsn,
 		postgres.WithInitialReconnectBackoffOnFail(time.Second),
+		postgres.WithMaxReconnectRetriesCount(5),
 	)
 	if err != nil {
 		logger.Fatalf("failed to init postgres client: %v", err)
