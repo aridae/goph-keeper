@@ -26,7 +26,7 @@ func (r *Repository) GetByAccessor(ctx context.Context, accessor models.SecretAc
 	}
 
 	var dtos []secretDTO
-	err = pgxscan.ScanRow(&dtos, rows)
+	err = pgxscan.ScanAll(&dtos, rows)
 	if err != nil {
 		return nil, fmt.Errorf("failed to scan row into userDTO: %w", err)
 	}
