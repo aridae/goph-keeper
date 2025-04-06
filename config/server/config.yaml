@@ -1,0 +1,2 @@
+database_dsn: postgresql://goph-keeper-user:goph-keeper-pwd@localhost:5432/goph-keeper
+grpc_port: 7012
