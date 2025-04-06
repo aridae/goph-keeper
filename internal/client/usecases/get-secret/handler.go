@@ -14,14 +14,16 @@ type Handler struct {
 	secretsService secretsService
 }
 
-type Command struct {
-	Key string
+func NewHandler(secretsService secretsService) *Handler {
+	return &Handler{
+		secretsService: secretsService,
+	}
 }
 
-func (h *Handler) Handle(ctx context.Context, command *Command) (secretsservice.Secret, error) {
-	secret, err := h.secretsService.GetSecret(ctx, command.Key)
+func (h *Handler) Handle(ctx context.Context, key string) (secretsservice.Secret, error) {
+	secret, err := h.secretsService.GetSecret(ctx, key)
 	if err != nil {
-		return secretsservice.Secret{}, fmt.Errorf("secretsService.CreateSecret: %w", err)
+		return secretsservice.Secret{}, fmt.Errorf("secretsService.GetSecret: %w", err)
 	}
 
 	return secret, nil

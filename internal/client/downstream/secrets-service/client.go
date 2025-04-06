@@ -13,9 +13,10 @@ type Client struct {
 }
 
 // NewClient создает клиент.
-func NewClient(target string) (*Client, error) {
+func NewClient(target string, interceptors ...grpc.UnaryClientInterceptor) (*Client, error) {
 	cc, err := grpc.NewClient(target,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithChainUnaryInterceptor(interceptors...),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to dial <target:%s>: %w", target, err)

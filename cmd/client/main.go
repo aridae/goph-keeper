@@ -1,57 +1,97 @@
 package main
 
 import (
+	"context"
+	"github.com/abiosoft/ishell/v2"
+	"github.com/aridae/goph-keeper/internal/client/auth"
 	"github.com/aridae/goph-keeper/internal/client/config"
+	authmw "github.com/aridae/goph-keeper/internal/client/downstream/grpc-client-mw/auth-mw"
 	secretsservice "github.com/aridae/goph-keeper/internal/client/downstream/secrets-service"
+	usersservice "github.com/aridae/goph-keeper/internal/client/downstream/users-service"
 	"github.com/aridae/goph-keeper/internal/client/prompt"
 	createsecret "github.com/aridae/goph-keeper/internal/client/usecases/create-secret"
+	getsecret "github.com/aridae/goph-keeper/internal/client/usecases/get-secret"
+	loginuser "github.com/aridae/goph-keeper/internal/client/usecases/login-user"
+	registeruser "github.com/aridae/goph-keeper/internal/client/usecases/register-user"
 	"github.com/aridae/goph-keeper/internal/logger"
-	"github.com/spf13/cobra"
 )
 
 func main() {
+	ctx := context.Background()
+
 	cnf := config.MustGetOnce()
 
-	//usersServiceClient, err := usersservice.NewClient(cnf.UsersServiceHost)
-	//if err != nil {
-	//	logger.Fatalf("failed to create users service client: %v", err)
-	//}
+	sessionStorage := auth.NewSession()
 
-	secretsServiceClient, err := secretsservice.NewClient(cnf.SecretsServiceHost)
+	usersServiceClient, err := usersservice.NewClient(cnf.UsersServiceHost)
+	if err != nil {
+		logger.Fatalf("failed to create users service client: %v", err)
+	}
+
+	secretsServiceClient, err := secretsservice.NewClient(
+		cnf.SecretsServiceHost,
+		authmw.AuthClientInterceptor(sessionStorage),
+	)
 	if err != nil {
 		logger.Fatalf("failed to create secrets service client: %v", err)
 	}
 
+	registerUserHandler := registeruser.NewHandler(usersServiceClient, sessionStorage)
+	loginUserHandler := loginuser.NewHandler(usersServiceClient, sessionStorage)
 	createSecretUseCase := createsecret.NewHandler(secretsServiceClient)
+	getSecretUseCase := getsecret.NewHandler(secretsServiceClient)
 
 	promptIO := prompt.NewService(
+		registerUserHandler,
+		loginUserHandler,
 		createSecretUseCase,
+		getSecretUseCase,
 	)
 
-	root := mustRegisterCommands(promptIO)
+	shell := mustRegisterShellCommands(ctx, promptIO)
 
-	if err := root.Execute(); err != nil {
-		logger.Fatalf("failed to execute root command: %v", err)
-	}
+	shell.Run()
 }
 
-func mustRegisterCommands(promptIO *prompt.Service) *cobra.Command {
-	// rootCmd represents the base command when called without any subcommands
-	var rootCmd = &cobra.Command{
-		Use:   "goph-keeper",
-		Short: "Use goph-keeper to keep your secrets safe and sound",
-		Long:  `Manage your secrets safely with the goph-keeper CLI app by your side`,
-	}
+func mustRegisterShellCommands(ctx context.Context, promptIO *prompt.Service) *ishell.Shell {
+	shell := ishell.New()
+	shell.AutoHelp(true)
 
-	createSecretCommand := &cobra.Command{
-		Use:   "new",
-		Short: "Creates a new secret record",
-		Long:  `Creates a new  secret record`,
-		Run: func(cmd *cobra.Command, args []string) {
-			promptIO.CreateSecret()
+	createSecretCommand := &ishell.Cmd{
+		Name: "new-secret",
+		Help: "Creates a new secret record",
+		Func: func(c *ishell.Context) {
+			promptIO.RunCreateSecretPrompt(ctx)
 		},
 	}
-	rootCmd.AddCommand(createSecretCommand)
+	shell.AddCmd(createSecretCommand)
 
-	return rootCmd
+	getSecretCommand := &ishell.Cmd{
+		Name: "get-secret",
+		Help: "Obtains a secret record",
+		Func: func(c *ishell.Context) {
+			promptIO.RunGetSecretPrompt(ctx)
+		},
+	}
+	shell.AddCmd(getSecretCommand)
+
+	loginUserCommand := &ishell.Cmd{
+		Name: "login",
+		Help: "Login in system",
+		Func: func(c *ishell.Context) {
+			promptIO.RunLoginUserPrompt(ctx)
+		},
+	}
+	shell.AddCmd(loginUserCommand)
+
+	registerUserCommand := &ishell.Cmd{
+		Name: "register",
+		Help: "Register in system",
+		Func: func(c *ishell.Context) {
+			promptIO.RunRegisterUserPrompt(ctx)
+		},
+	}
+	shell.AddCmd(registerUserCommand)
+
+	return shell
 }

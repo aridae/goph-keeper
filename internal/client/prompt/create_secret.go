@@ -2,59 +2,49 @@ package prompt
 
 import (
 	"context"
-	"errors"
+	promptio "github.com/aridae/goph-keeper/internal/client/pkg/prompt-io"
 	createsecret "github.com/aridae/goph-keeper/internal/client/usecases/create-secret"
 )
 
-func (s *Service) CreateSecret() {
-	ctx := context.Background()
-
-	type promptInput struct {
-		key  string
-		data []byte
-	}
-
-	input := promptInput{}
-
-	dialog := dialog{
-		label: "create-secret-dialog",
-		prompts: []prompt{
-			{
-				label:     "input-secret-key",
-				entryText: "Please input key of the secret to create:",
-				entryValidationFunc: func(s string) error {
-					if len(s) == 0 {
-						return errors.New("empty key is unprocessable :(")
-					}
-					return nil
-				},
-				acceptResultFunc: func(s string) {
-					input.key = s
-				},
-			},
-			{
-				label:     "input-secret-data",
-				entryText: "Please input secret data:",
-				entryValidationFunc: func(s string) error {
-					if len(s) == 0 {
-						return errors.New("empty data is unprocessable :(")
-					}
-					return nil
-				},
-				acceptResultFunc: func(s string) {
-					input.data = []byte(s)
-				},
-			},
-		},
-	}
-
-	dialog.mustRun()
+func (s *Service) RunCreateSecretPrompt(ctx context.Context) {
+	input := createSecretPromptInput{}
+	dialog := buildCreateSecretDialog(&input)
+	dialog.MustRun()
 
 	err := s.createSecretHandler.Handle(ctx, createsecret.Request{
 		Key:  input.key,
 		Data: input.data,
 	})
 	if err != nil {
-		presentError(err)
+		dialog.PresentError(err)
+		return
 	}
+
+	dialog.PresentSuccess("Your secret is safe with me!")
+}
+
+type createSecretPromptInput struct {
+	key  string
+	data []byte
+}
+
+func buildCreateSecretDialog(input *createSecretPromptInput) promptio.Dialog {
+	dialog := promptio.Dialog{
+		Prompts: []promptio.Prompt{
+			{
+				EntryText: "Please input key of the secret to create:",
+				AcceptResultFunc: func(s string) {
+					input.key = s
+				},
+			},
+			{
+				EntryText: "Please input secret data:",
+				AcceptResultFunc: func(s string) {
+					input.data = []byte(s)
+				},
+			},
+		},
+	}
+
+	return dialog
 }
