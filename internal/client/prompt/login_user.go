@@ -2,7 +2,7 @@ package prompt
 
 import (
 	"context"
-	promptio "github.com/aridae/goph-keeper/internal/client/pkg/prompt-io"
+	promptio "github.com/aridae/goph-keeper/internal/client/prompt/dialog"
 	loginuser "github.com/aridae/goph-keeper/internal/client/usecases/login-user"
 )
 

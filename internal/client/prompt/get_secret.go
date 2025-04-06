@@ -3,7 +3,7 @@ package prompt
 import (
 	"context"
 	"fmt"
-	promptio "github.com/aridae/goph-keeper/internal/client/pkg/prompt-io"
+	promptio "github.com/aridae/goph-keeper/internal/client/prompt/dialog"
 )
 
 func (s *Service) RunGetSecretPrompt(ctx context.Context) {

@@ -1,4 +1,4 @@
-package promptio
+package dialog
 
 import (
 	"errors"
