@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/aridae/goph-keeper/internal/common/domain-errors"
 	"github.com/aridae/goph-keeper/internal/server/models"
-	domainerrors "github.com/aridae/goph-keeper/internal/server/models/domain-errors"
 	"github.com/aridae/goph-keeper/internal/server/pkg/jwt"
 	userrepo "github.com/aridae/goph-keeper/internal/server/repos/user"
 )

@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"crypto/rand"
-	"github.com/aridae/goph-keeper/internal/logger"
+	"github.com/aridae/goph-keeper/internal/common/logger"
 	"github.com/aridae/goph-keeper/internal/server/config"
 	secretusecases "github.com/aridae/goph-keeper/internal/server/controllers/secret"
 	userusecases "github.com/aridae/goph-keeper/internal/server/controllers/user"

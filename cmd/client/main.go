@@ -6,6 +6,7 @@ import (
 	"github.com/aridae/goph-keeper/internal/client/auth"
 	"github.com/aridae/goph-keeper/internal/client/config"
 	authmw "github.com/aridae/goph-keeper/internal/client/downstream/grpc-client-mw/auth-mw"
+	errormappingmw "github.com/aridae/goph-keeper/internal/client/downstream/grpc-client-mw/error-mapping-mw"
 	secretsservice "github.com/aridae/goph-keeper/internal/client/downstream/secrets-service"
 	usersservice "github.com/aridae/goph-keeper/internal/client/downstream/users-service"
 	"github.com/aridae/goph-keeper/internal/client/prompt"
@@ -13,7 +14,7 @@ import (
 	getsecret "github.com/aridae/goph-keeper/internal/client/usecases/get-secret"
 	loginuser "github.com/aridae/goph-keeper/internal/client/usecases/login-user"
 	registeruser "github.com/aridae/goph-keeper/internal/client/usecases/register-user"
-	"github.com/aridae/goph-keeper/internal/logger"
+	"github.com/aridae/goph-keeper/internal/common/logger"
 )
 
 func main() {
@@ -23,13 +24,17 @@ func main() {
 
 	sessionStorage := auth.NewSession()
 
-	usersServiceClient, err := usersservice.NewClient(cnf.UsersServiceHost)
+	usersServiceClient, err := usersservice.NewClient(
+		cnf.UsersServiceHost,
+		errormappingmw.ErrorMapperInterceptor(),
+	)
 	if err != nil {
 		logger.Fatalf("failed to create users service client: %v", err)
 	}
 
 	secretsServiceClient, err := secretsservice.NewClient(
 		cnf.SecretsServiceHost,
+		errormappingmw.ErrorMapperInterceptor(),
 		authmw.AuthClientInterceptor(sessionStorage),
 	)
 	if err != nil {

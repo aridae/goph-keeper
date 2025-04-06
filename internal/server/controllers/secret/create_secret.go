@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/aridae/goph-keeper/internal/common/domain-errors"
 	"github.com/aridae/goph-keeper/internal/server/auth/authctx"
 	"github.com/aridae/goph-keeper/internal/server/models"
-	domainerrors "github.com/aridae/goph-keeper/internal/server/models/domain-errors"
 	secretrepo "github.com/aridae/goph-keeper/internal/server/repos/secret"
 )
 

@@ -3,7 +3,7 @@ package user
 import (
 	"context"
 	"fmt"
-	domainerrors "github.com/aridae/goph-keeper/internal/server/models/domain-errors"
+	"github.com/aridae/goph-keeper/internal/common/domain-errors"
 	"github.com/aridae/goph-keeper/internal/server/pkg/jwt"
 )
 

@@ -16,7 +16,7 @@ func (s *Service) RunCreateSecretPrompt(ctx context.Context) {
 		Data: input.data,
 	})
 	if err != nil {
-		dialog.PresentError(err)
+		dialog.PresentError(err, printableErrorMessage)
 		return
 	}
 

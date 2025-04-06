@@ -2,7 +2,7 @@ package promptio
 
 import (
 	"errors"
-	"github.com/aridae/goph-keeper/internal/logger"
+	"github.com/aridae/goph-keeper/internal/common/logger"
 	"github.com/fatih/color"
 	"github.com/manifoldco/promptui"
 )
@@ -28,8 +28,8 @@ func (d Dialog) PresentSuccess(message string) {
 	color.Blue(message)
 }
 
-func (d Dialog) PresentError(err error) {
-	color.Red("Error occurred: %v", err)
+func (d Dialog) PresentError(err error, errorPresenterFunc func(error) string) {
+	color.Red("Error occurred: %s", errorPresenterFunc(err))
 }
 
 type Prompt struct {

@@ -2,15 +2,14 @@ package authmw
 
 import (
 	"context"
+	grpcauth "github.com/aridae/goph-keeper/internal/common/grpc-auth"
 	"github.com/aridae/goph-keeper/internal/server/auth/authctx"
 	"github.com/aridae/goph-keeper/internal/server/models"
 	"github.com/aridae/goph-keeper/internal/server/pkg/jwt"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"slices"
-	"strings"
 )
 
 type jwtService interface {
@@ -26,7 +25,7 @@ func AuthServerInterceptor(
 			return handler(ctx, req)
 		}
 
-		token, err := extractTokenFromMetaData(ctx, "Bearer")
+		token, err := grpcauth.ExtractBearerTokenFromMetadata(ctx)
 		if err != nil {
 			return nil, status.Errorf(codes.Unauthenticated, err.Error())
 		}
@@ -41,22 +40,4 @@ func AuthServerInterceptor(
 
 		return handler(ctx, req)
 	}
-}
-
-func extractTokenFromMetaData(ctx context.Context, expectedAuthScheme string) (string, error) {
-	vals := metadata.ValueFromIncomingContext(ctx, "authorization")
-	if len(vals) == 0 {
-		return "", status.Errorf(codes.Unauthenticated, "Request unauthenticated with %s", expectedAuthScheme)
-	}
-
-	tokenScheme, token, found := strings.Cut(vals[0], " ")
-	if !found {
-		return "", status.Error(codes.Unauthenticated, "Bad authorization string")
-	}
-
-	if !strings.EqualFold(expectedAuthScheme, tokenScheme) {
-		return "", status.Errorf(codes.Unauthenticated, "Request unauthenticated with %s", expectedAuthScheme)
-	}
-
-	return token, nil
 }

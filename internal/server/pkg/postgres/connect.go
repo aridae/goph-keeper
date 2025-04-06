@@ -3,7 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
-	"github.com/aridae/goph-keeper/internal/logger"
+	"github.com/aridae/goph-keeper/internal/common/logger"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"

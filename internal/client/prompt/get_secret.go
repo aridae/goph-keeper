@@ -13,11 +13,11 @@ func (s *Service) RunGetSecretPrompt(ctx context.Context) {
 
 	secret, err := s.getSecretHandler.Handle(ctx, input.key)
 	if err != nil {
-		dialog.PresentError(err)
+		dialog.PresentError(err, printableErrorMessage)
 		return
 	}
 
-	dialog.PresentSuccess(fmt.Sprintf("Your secret: %v", secret.Data))
+	dialog.PresentSuccess(fmt.Sprintf("Your secret: %s", string(secret.Data)))
 }
 
 type getSecretPromptInput struct {

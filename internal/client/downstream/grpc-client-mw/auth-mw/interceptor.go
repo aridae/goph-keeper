@@ -2,9 +2,8 @@ package authmw
 
 import (
 	"context"
-	"fmt"
+	grpcauth "github.com/aridae/goph-keeper/internal/common/grpc-auth"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/metadata"
 )
 
 type sessionStorage interface {
@@ -17,13 +16,9 @@ func AuthClientInterceptor(
 	return func(ctx context.Context, method string, req, reply any, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
 		token := sessionStorage.GetToken(ctx)
 		if token != nil {
-			ctx = putTokenToMetaData(ctx, "Bearer", *token)
+			ctx = grpcauth.PutBearerTokenToMetadata(ctx, *token)
 		}
 
 		return invoker(ctx, method, req, reply, cc, opts...)
 	}
-}
-
-func putTokenToMetaData(ctx context.Context, authScheme string, token string) context.Context {
-	return metadata.AppendToOutgoingContext(ctx, "authorization", fmt.Sprintf("%s %s", authScheme, token))
 }

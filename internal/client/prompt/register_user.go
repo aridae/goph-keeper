@@ -16,7 +16,7 @@ func (s *Service) RunRegisterUserPrompt(ctx context.Context) {
 		Password: input.password,
 	})
 	if err != nil {
-		dialog.PresentError(err)
+		dialog.PresentError(err, printableErrorMessage)
 		return
 	}
 

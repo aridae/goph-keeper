@@ -3,7 +3,7 @@ package grpc
 import (
 	"context"
 	"fmt"
-	"github.com/aridae/goph-keeper/internal/logger"
+	"github.com/aridae/goph-keeper/internal/common/logger"
 	gophkeepersecretpb "github.com/aridae/goph-keeper/pkg/pb/goph-keeper/secret"
 	gophkeeperuserpb "github.com/aridae/goph-keeper/pkg/pb/goph-keeper/user"
 	"google.golang.org/grpc"

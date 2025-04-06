@@ -2,10 +2,12 @@ package prompt
 
 import (
 	"context"
+	"errors"
 	secretsservice "github.com/aridae/goph-keeper/internal/client/downstream/secrets-service"
 	createsecret "github.com/aridae/goph-keeper/internal/client/usecases/create-secret"
 	loginuser "github.com/aridae/goph-keeper/internal/client/usecases/login-user"
 	registeruser "github.com/aridae/goph-keeper/internal/client/usecases/register-user"
+	domainerrors "github.com/aridae/goph-keeper/internal/common/domain-errors"
 )
 
 type registerUserHandler interface {
@@ -43,4 +45,12 @@ func NewService(
 		createSecretHandler: createSecretHandler,
 		getSecretHandler:    getSecretHandler,
 	}
+}
+
+func printableErrorMessage(err error) string {
+	if domainErr := new(domainerrors.DomainError); errors.As(err, domainErr) {
+		return domainErr.Msg
+	}
+
+	return err.Error()
 }
