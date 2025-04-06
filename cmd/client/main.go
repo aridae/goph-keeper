@@ -35,7 +35,7 @@ func main() {
 	secretsServiceClient, err := secretsservice.NewClient(
 		cnf.SecretsServiceHost,
 		errormappingmw.ErrorMapperInterceptor(),
-		authmw.AuthClientInterceptor(sessionStorage),
+		authmw.AuthInterceptor(sessionStorage),
 	)
 	if err != nil {
 		logger.Fatalf("failed to create secrets service client: %v", err)

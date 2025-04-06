@@ -3,7 +3,7 @@ package secretsapi
 import (
 	"context"
 	"fmt"
-	secretusecases "github.com/aridae/goph-keeper/internal/server/controllers/secret"
+	secretusecases "github.com/aridae/goph-keeper/internal/server/usecases/secret"
 	desc "github.com/aridae/goph-keeper/pkg/pb/goph-keeper/secret"
 )
 

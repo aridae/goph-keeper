@@ -3,7 +3,7 @@ package usersapi
 import (
 	"context"
 	"fmt"
-	"github.com/aridae/goph-keeper/internal/server/controllers/user"
+	"github.com/aridae/goph-keeper/internal/server/usecases/user"
 	desc "github.com/aridae/goph-keeper/pkg/pb/goph-keeper/user"
 )
 

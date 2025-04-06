@@ -16,7 +16,7 @@ type jwtService interface {
 	ParseToken(ctx context.Context, tokenString string) (jwt.Claims, error)
 }
 
-func AuthServerInterceptor(
+func AuthInterceptor(
 	jwtService jwtService,
 	whitelist []string,
 ) grpc.UnaryServerInterceptor {
