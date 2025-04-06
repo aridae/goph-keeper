@@ -8,6 +8,13 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// MapDomainToGrpcError преобразует ошибки доменного уровня в ошибки gRPC.
+//
+// Параметры:
+// err error - ошибка доменного уровня.
+//
+// Возвращаемые значения:
+// error - соответствующая ошибка gRPC.
 func MapDomainToGrpcError(err error) error {
 	if domainError := new(domainerrors.DomainError); errors.As(err, domainError) {
 		switch domainError.Code {

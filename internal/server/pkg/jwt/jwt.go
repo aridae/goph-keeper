@@ -6,20 +6,38 @@ import (
 	jwtv5 "github.com/golang-jwt/jwt/v5"
 )
 
+// Claims аутентификационные данные JWT-токена.
 type Claims struct {
 	Subject string
 }
 
+// Service предоставляет функциональность для генерации и парсинга JWT-токенов.
 type Service struct {
 	secretKeyProvider func(ctx context.Context) []byte
 }
 
+// NewService создаёт новый экземпляр сервиса для работы с JWT-токенами.
+//
+// Параметры:
+// secretKeyProvider func(ctx context.Context) []byte - функция, предоставляющая секретный ключ.
+//
+// Возвращаемые значения:
+// *Service - новый экземпляр сервиса.
 func NewService(
 	secretKeyProvider func(ctx context.Context) []byte,
 ) *Service {
 	return &Service{secretKeyProvider: secretKeyProvider}
 }
 
+// GenerateToken генерирует JWT-токен с указанными аутентификационными данными.
+//
+// Параметры:
+// ctx context.Context - контекст выполнения.
+// clms Claims - аутентификационные данные токена.
+//
+// Возвращаемые значения:
+// string - строка с подписанным JWT-токеном.
+// error - ошибка, если токен не удалось подписать.
 func (s *Service) GenerateToken(ctx context.Context, clms Claims) (string, error) {
 	claims := jwtv5.MapClaims{
 		"sub": clms.Subject,
@@ -35,6 +53,15 @@ func (s *Service) GenerateToken(ctx context.Context, clms Claims) (string, error
 	return signedTokenString, nil
 }
 
+// ParseToken парсит JWT-токен и возвращает аутентификационные данные.
+//
+// Параметры:
+// ctx context.Context - контекст выполнения.
+// tokenString string - строка с JWT-токеном.
+//
+// Возвращаемые значения:
+// Claims - аутентификационные данные токена.
+// error - ошибка, если токен не удалось распарсить.
 func (s *Service) ParseToken(ctx context.Context, tokenString string) (Claims, error) {
 	claims := jwtv5.MapClaims{}
 
