@@ -22,6 +22,28 @@ lint:
 fmt:
 	go fmt ./...
 
+.PHONY: test
+test:
+	go test ./...
+
+.PHONY: test-coverage
+test-coverage: export COVERAGE_OUT_FILE := ./coverage.out
+test-coverage:
+	go test ./... -coverpkg=./... -coverprofile=${COVERAGE_OUT_FILE} -vet=all
+	go tool cover -func=${COVERAGE_OUT_FILE}
+
+# usage: make bench out=filename.txt
+.PHONY: bench
+bench:
+	go test ./... -bench=./... -benchmem > ${out}
+
+# usage: make benchstat old=old.txt new=new.txt
+.PHONY: benchstat
+benchstat: export BENCHSTATBIN := ${LOCALBIN}/benchstat
+benchstat:
+	test -f ${BENCHSTATBIN} || GOBIN=${LOCALBIN} go install golang.org/x/perf/cmd/benchstat@latest
+	PATH=${PATH}:${LOCALBIN} ${BENCHSTATBIN} ${old} ${new}
+
 .PHONY: install-protoc
 install-protoc: export PROTOC_VERSION := 30.0
 install-protoc: export PROTOC_ZIP := protoc-$(PROTOC_VERSION)-osx-x86_64.zip # версия только для osx
@@ -50,3 +72,16 @@ generate-pb: install-protoc-gen-go
 		--go_out=pkg/pb/goph-keeper/secret --go_opt=paths=source_relative \
 		--go-grpc_out=pkg/pb/goph-keeper/secret --go-grpc_opt=paths=source_relative \
 		secrets_service.proto
+
+GOOS=darwin
+GOARCH=amd64
+
+VERSION = v0.0.1
+COMMIT = $(shell git rev-parse HEAD)
+DATE = $(shell date "+%Y-%m-%d")
+LDFLAGS = -X main.buildVersion=$(VERSION) -X main.buildDate=$(DATE) -X main.buildCommit=$(COMMIT)
+
+PHONY: build-client
+build-client: export CLIENTBIN := ${LOCALBIN}/client
+build-client:
+	GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o ${CLIENTBIN} -ldflags "$(LDFLAGS)" cmd/client/main.go

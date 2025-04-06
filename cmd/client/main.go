@@ -17,8 +17,15 @@ import (
 	"github.com/aridae/goph-keeper/internal/common/logger"
 )
 
+var (
+	buildVersion = "N/A"
+	buildDate    = "N/A"
+	buildCommit  = "N/A"
+)
+
 func main() {
 	ctx := context.Background()
+	logger.Infof("Starting goph-keeper client cli app with build flags:\nBuild version: %s\nBuild date: %s\nBuild commit: %s\n", buildVersion, buildDate, buildCommit)
 
 	cnf := config.MustGetOnce()
 
