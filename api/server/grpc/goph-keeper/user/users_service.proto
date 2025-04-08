@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package goph_keeper;
+
+// import path of the package which will contain all the generated code for this file
+option go_package = "github.com/aridae/goph-keeper/pkg/pb/goph-keeper/user;gophkeeperuser";
+
+// Сервис для работы с пользователями: регистрация, аутентификация
+service UsersService {
+  // Регистрация нового пользователя
+  rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse);
+
+  // Аутентификация пользователя
+  rpc LoginUser(LoginUserRequest) returns (LoginUserResponse);
+}
+
+message RegisterUserRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message RegisterUserResponse {
+  string token = 1;
+}
+
+message LoginUserRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message LoginUserResponse {
+  string token = 1;
+}
