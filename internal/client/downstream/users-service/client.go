@@ -7,12 +7,21 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+// Client предоставляет доступ к сервису UsersService через gRPC.
 type Client struct {
 	conn *grpc.ClientConn
 	grpc desc.UsersServiceClient
 }
 
-// NewClient создает клиент.
+// NewClient создаёт новый клиент для взаимодействия с сервисом UsersService.
+//
+// Параметры:
+// target string - адрес сервера gRPC.
+// interceptors ...grpc.UnaryClientInterceptor - цепочка интерсепторов для обработки запросов.
+//
+// Возвращаемые значения:
+// *Client - новый клиент UsersService.
+// error - ошибка, если не удалось подключиться к серверу.
 func NewClient(target string, interceptors ...grpc.UnaryClientInterceptor) (*Client, error) {
 	cc, err := grpc.NewClient(target,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
@@ -28,7 +37,10 @@ func NewClient(target string, interceptors ...grpc.UnaryClientInterceptor) (*Cli
 	}, nil
 }
 
-// Close закрывает соединение с сервисом.
+// Close закрывает соединение с сервисом UsersService.
+//
+// Возвращаемые значения:
+// error - ошибка, если не удалось закрыть соединение.
 func (c *Client) Close() error {
 	return c.conn.Close()
 }
